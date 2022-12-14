@@ -1,8 +1,8 @@
 import sys
 
-sys.path.append('../src')
+sys.path.append('../src/Beetroot')
 
-from engine import *
+from Beetroot.engine import *
 
 import pytest
 import numpy as np

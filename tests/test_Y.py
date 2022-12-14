@@ -1,8 +1,9 @@
 import sys
 
-sys.path.append('src')
+sys.path.append('../src/Beetroot')
 
-from engine import *
+from Beetroot.engine import *
+from Beetroot.signal import *
 
 import pytest
 import numpy as np
@@ -26,3 +27,12 @@ def test_Y(N, de, Gamma, omega, kt):
     eps = np.linspace(-10*m, 10*m, 101)
 
     get_Signal(N, eps, de, Gamma, omega, kt)
+
+@pytest.mark.parametrize('N, de, Gamma, omega, kt',[_generate_inputs() for _ in range(3)])
+def test_single_Y(N, de, Gamma, omega, kt):
+
+    m = max(Gamma, omega, de)
+    
+    eps = np.linspace(-10*m, 10*m, 101)
+
+    get_Single_Signal(N, eps, de, Gamma, omega, kt)
