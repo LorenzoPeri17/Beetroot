@@ -50,7 +50,7 @@ def test_fd(x):
 @pytest.mark.parametrize('x, y, z', [(x, y, z) for x, y, z in zip(np.random.uniform(0, 1e4, 10), np.random.uniform(0, 1e4, 10), np.random.uniform(0, 1e4, 10))])
 def test_Lorentz(x, y, z):
 
-    assert np.isclose(Lorentz(x, y, z), z/(z**2 + (x-y)**2))
+    assert np.isclose(Lorentz(x, y, z), (z/np.pi)/(z**2 + (x-y)**2))
 
 @pytest.mark.parametrize('N', [N for N in np.random.randint(0, 50, 10)])
 def test_sign(N):

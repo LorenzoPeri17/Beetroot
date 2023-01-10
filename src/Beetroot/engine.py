@@ -36,7 +36,7 @@ def FermiDirac(x):
         nbtypes.double[:](nbtypes.double, nbtypes.Array(nbtypes.double, 1, 'C', readonly=True), nbtypes.double)],
     cache=True, **jit_kwargs)
 def Lorentz(e, e0, Gamma):
-    return Gamma/(Gamma**2 + (e-e0)**2)
+    return (Gamma/np.pi) /(Gamma**2 + (e-e0)**2)
 
 @njit(nbtypes.double[::1](nbtypes.int64, nbtypes.double, nbtypes.double),
      **jit_kwargs)
@@ -111,11 +111,21 @@ def generate_convolved_spline(x, dx, Gamma, kt, k = 3):
 
     @njit(fastmath = True)
     def _integrand(e):
-        return FermiDirac(e/kt) * Lorentz(e, x, Gamma)
+        return (1-FermiDirac(e/kt)) * Lorentz(e, x, Gamma)
 
     res, _ = quad_vec(_integrand, -np.infty, np.infty)
 
     return interp1d(x.min(), x.max(), dx, res, k)
+
+def _convolve(x, Gamma, kt):
+
+    @njit(fastmath = True)
+    def _integrand(e):
+        return (1-FermiDirac(e/kt)) * Lorentz(e, x, Gamma)
+
+    res, _ = quad_vec(_integrand, -np.infty, np.infty)
+
+    return res
 
 @njit(nbtypes.int64(nbtypes.int64), cache = True, **jit_kwargs)
 def power_sign(n):
