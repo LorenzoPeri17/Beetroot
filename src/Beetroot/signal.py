@@ -190,13 +190,13 @@ def get_Signal_Dec(N : int, eps : np.ndarray, de:float,
 
     _x, _dx = np.linspace(min_x, max_x, max(int(np.ceil((max_x - min_x)/_d_eps)), 101), retstep=True)
 
-    prefact = N * Gamma_phi * _dew**2
+    prefact = Gamma_phi * _dew**2
 
-    FD_splines = [generate_convolved_spline(_x, _dx, _Gamma_m, kt) for _Gamma_m in Gamma + prefact*np.arange(convergence_index_J)]
+    FD_splines = [generate_convolved_spline(_x, _dx, _Gamma_m, kt) for _Gamma_m in Gamma + prefact*np.arange(convergence_index_J-N)]
 
     Y0 = _compute_signal_dec(FD_splines, BJ_array, N, eps, omega)
 
-    return Y0
+    return Y0 * H(2*np.pi*N*prefact)
 
 def get_map_single(N : int, eps : np.ndarray, de:np.ndarray, 
                 Gamma:float, omega:float, kt:float, 
@@ -210,6 +210,23 @@ def get_map_single(N : int, eps : np.ndarray, de:np.ndarray,
 
     with mp.Pool(processes=ncores) as pool:
         for res in pool.starmap(get_Single_Signal, args, chunksize= 1): #len(args)//ncores):
+
+            Map.append(res)
+        
+        return np.array(Map)
+
+def get_map_dec(N : int, eps : np.ndarray, de:np.ndarray, 
+                Gamma:float, omega:float, kt:float, Gamma_phi:float,
+                toll:float = 1e-4) -> np.ndarray:
+
+    Map = []
+
+    args = [(N, eps, de0, Gamma, omega, kt, Gamma_phi, toll) for de0 in de]
+
+    ncores = mp.cpu_count()
+
+    with mp.Pool(processes=ncores) as pool:
+        for res in pool.starmap(get_Signal_Dec, args, chunksize= 1): #len(args)//ncores):
 
             Map.append(res)
         

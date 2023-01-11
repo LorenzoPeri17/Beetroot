@@ -29,6 +29,13 @@ def Ie(m : int, x : float):
 def FermiDirac(x):
     return 1/(np.exp(x)+1)
 
+@njit([nbtypes.double(nbtypes.double)],
+    cache=True, **jit_kwargs)
+def H(x):
+    if x==0:
+        return 1.0
+    return (1-np.exp(-x))/x
+
 @njit([nbtypes.double[:](nbtypes.double[:], nbtypes.double[:], nbtypes.double), 
         nbtypes.double[:](nbtypes.double, nbtypes.double[:], nbtypes.double),
         nbtypes.double[:](nbtypes.double[:], nbtypes.double, nbtypes.double), 
