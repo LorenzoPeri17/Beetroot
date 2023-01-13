@@ -3,10 +3,12 @@ import numpy as np
 from fast_interp import interp1d
 
 from scipy.integrate import quad_vec
+from scipy.signal import fftconvolve
 
 import multiprocessing as mp
-from numba import njit, jit, prange
+from numba import njit, jit, prange, typeof
 from numba import types as nbtypes
+from numba.typed import List
 
 from scipy import special
 import numba_scipy
@@ -120,7 +122,7 @@ def generate_convolved_spline(x, dx, Gamma, kt, k = 3):
     def _integrand(e):
         return (1-FermiDirac(e/kt)) * Lorentz(e, x, Gamma)
 
-    res, _ = quad_vec(_integrand, -np.infty, np.infty)
+    res, _ = quad_vec(_integrand, -np.infty, np.infty, points = [0])
 
     return interp1d(x.min(), x.max(), dx, res, k)
 
@@ -130,7 +132,52 @@ def _convolve(x, Gamma, kt):
     def _integrand(e):
         return (1-FermiDirac(e/kt)) * Lorentz(e, x, Gamma)
 
-    res, _ = quad_vec(_integrand, -np.infty, np.infty)
+    res, _ = quad_vec(_integrand, -np.infty, np.infty, points = [0])
+
+    return res
+
+def _fftconvolve(x, Gamma, kt):
+
+    _dx = x[1]-x[0]
+
+    _n = x.shape[0]
+
+    n_2= (_n-1)//2
+
+    _D = _dx * n_2
+
+    _xc = np.linspace(x.min()-_D, x.max()+_D, num = 2*_n-1 )
+
+    res = fftconvolve((1-FermiDirac(_xc/kt)),  Lorentz(x, 0, Gamma), mode = 'valid')
+
+    return res
+
+def _analytical(x, Gamma, kt):
+
+    _2pkt_i = 1/(2*np.pi*kt)
+    _gkt = Gamma * _2pkt_i
+
+    _xkt = x * _2pkt_i
+
+    res = special.digamma(0.5 + _gkt +1j*_xkt) - special.digamma(0.5 + _gkt -1j*_xkt)
+
+    return 0.5*(1 + res.imag/np.pi)
+
+# @njit(nbtypes.double[:](nbtypes.double[:], nbtypes.double, nbtypes.double),
+#     cache=True, **jit_kwargs)
+def _numconvolve(x, Gamma, kt):
+
+    _dx = x[1]-x[0]
+
+    _n = x.shape[0]
+
+    n_2= (_n-1)//2
+
+    _D = _dx * n_2
+
+    _xc = np.linspace(x.min()-_D, x.max()+_D, num=2*_n-1 )
+
+    res = np.convolve((1-FermiDirac(_xc/kt)),  Lorentz(x, 0, Gamma), mode='valid')
 
     return res
 

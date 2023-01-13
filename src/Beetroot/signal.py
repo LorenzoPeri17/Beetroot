@@ -1,5 +1,3 @@
-from scipy.integrate import quad_vec
-
 import multiprocessing as mp
 from numba import njit, jit, prange
 from numba import types as nbtypes
@@ -21,7 +19,7 @@ def _compute_signal(FD_spline,
 
     BesselJ_factor_0 = (BJ_array[0]* BJ_array[N] * (1+power_sign(N)))
 
-    Y0 =  BesselJ_factor_0 * FD_spline(_x0)
+    Y0 =  BesselJ_factor_0 * FD_spline.compute(_x0)
 
     m_sign = 1
 
@@ -33,10 +31,10 @@ def _compute_signal(FD_spline,
         J_factor_p = (J_m * (BJ_array[m+N] + handle_negative_index(m-N, BJ_array)))
         J_factor_m = m_sign * (J_m * (handle_negative_index(-m+N, BJ_array) + handle_negative_index(-m-N, BJ_array)))
 
-        Y0 += J_factor_p * FD_spline(_x0 - m * omega)
-        Y0 += J_factor_m * FD_spline(_x0 + m * omega)
+        Y0 += J_factor_p * FD_spline.compute(_x0 - m * omega)
+        Y0 += J_factor_m * FD_spline.compute(_x0 + m * omega)
 
-    Y_0_interp = interp1d(_x0.min(), _x0.max(), _dx0, Y0)
+    Y_0_interp = interp1d(_x0.min(), _x0.max(), _dx0, Y0).compute
 
     Y = BIe_array[0] * Y_0_interp(eps)
 
@@ -48,8 +46,8 @@ def _compute_signal(FD_spline,
 
     return Y, Y_0_interp(eps)
 
-
-@jit(fastmath = True, nopython = False, forceobj = True)
+# @jit(fastmath = True, nopython = False, forceobj = True)
+@njit(nbtypes.double[:](typeof(interp1d(0, 1, 1, np.array((0, 1), dtype=np.double), 3)), nbtypes.double[:], nbtypes.int32, nbtypes.double[:], nbtypes.double))
 def _compute_single_signal(FD_spline, 
                     BJ_array, 
                     N, eps, omega):
@@ -58,7 +56,7 @@ def _compute_single_signal(FD_spline,
 
     BesselJ_factor_0 = (BJ_array[0]* BJ_array[N] * (1+power_sign(N)))
 
-    Y0 =  BesselJ_factor_0 * FD_spline(eps)
+    Y0 =  BesselJ_factor_0 * FD_spline.compute(eps)
 
     m_sign = 1
 
@@ -70,12 +68,13 @@ def _compute_single_signal(FD_spline,
         J_factor_p = (J_m * (BJ_array[m+N] + handle_negative_index(m-N, BJ_array)))
         J_factor_m = m_sign * (J_m * (handle_negative_index(-m+N, BJ_array) + handle_negative_index(-m-N, BJ_array)))
 
-        Y0 += J_factor_p * FD_spline(eps - m * omega)
-        Y0 += J_factor_m * FD_spline(eps + m * omega)
+        Y0 += J_factor_p * FD_spline.compute(eps - m * omega)
+        Y0 += J_factor_m * FD_spline.compute(eps + m * omega)
     
     return Y0
 
-@jit(fastmath = True, nopython = False, forceobj = True)
+# @jit(fastmath = True, nopython = False, forceobj = True)
+@njit(nbtypes.double[:](typeof(List([interp1d(0, 1, 1, np.array((0, 1), dtype=np.double), 3)])), nbtypes.double[:], nbtypes.int32, nbtypes.double[:], nbtypes.double))
 def _compute_signal_dec(FD_splines, 
                     BJ_array, 
                     N, eps, omega):
@@ -84,7 +83,7 @@ def _compute_signal_dec(FD_splines,
 
     BesselJ_factor_0 = (BJ_array[0]* BJ_array[N] * (1+power_sign(N)))
 
-    Y0 =  BesselJ_factor_0 * FD_splines[0](eps)
+    Y0 =  BesselJ_factor_0 * FD_splines[0].compute(eps)
 
     m_sign = 1
 
@@ -96,7 +95,7 @@ def _compute_signal_dec(FD_splines,
         J_factor_p = (J_m * (BJ_array[m+N] + handle_negative_index(m-N, BJ_array)))
         J_factor_m = m_sign * (J_m * (handle_negative_index(-m+N, BJ_array) + handle_negative_index(-m-N, BJ_array)))
 
-        _spline = FD_splines[m]
+        _spline = FD_splines[m].compute
 
         Y0 += J_factor_p * _spline(eps - m * omega)
         Y0 += J_factor_m * _spline(eps + m * omega)
@@ -174,6 +173,9 @@ def get_Signal_Dec(N : int, eps : np.ndarray, de:float,
                 Gamma:float, omega:float, kt:float, Gamma_phi:float,
                 toll:float = 1e-4) -> np.ndarray:
 
+    if eps.shape[0]&1!=1:
+        raise ValueError('eps0 mst be ODD')
+
     _dew = de/omega
 
     BJ_array = get_Js(N+1, _dew, toll)
@@ -192,7 +194,9 @@ def get_Signal_Dec(N : int, eps : np.ndarray, de:float,
 
     prefact = Gamma_phi * _dew**2
 
-    FD_splines = [generate_convolved_spline(_x, _dx, _Gamma_m, kt) for _Gamma_m in Gamma + prefact*np.arange(convergence_index_J-N)]
+    cutoff = 0
+
+    FD_splines = List([generate_convolved_spline(_x, _dx, _Gamma_m, kt) for _Gamma_m in Gamma + prefact*np.arange(convergence_index_J-N)])
 
     Y0 = _compute_signal_dec(FD_splines, BJ_array, N, eps, omega)
 

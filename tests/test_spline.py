@@ -15,7 +15,7 @@ def test_spline(a):
     
     x, dx =np.linspace(-10 /a, 10/a, 1001, retstep=True)
 
-    spline = interp1d(-10 /a, 10/a, dx, _func_to_spline(x, a), k = 3)
+    spline = interp1d(-10 /a, 10/a, dx, _func_to_spline(x, a), k = 3).compute
 
     x_rnd = np.random.uniform(-10 /a, 10/a, 1)
 
