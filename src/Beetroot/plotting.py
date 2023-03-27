@@ -17,7 +17,7 @@ def plot_map_single(N : int, eps : np.ndarray, de:np.ndarray,
 
     im = ax.pcolormesh(eps, de, M, **plotkwargs)
 
-    fig.suptitle(rf'$N = {N} : \Gamma = {Gamma}, k_B T = {kt}$', usetex = True)
+    fig.suptitle(rf'$N = {N} : \omega = {omega}, \Gamma = {Gamma}, k_B T = {kt}$', usetex = True)
 
     ax.set_xlabel(r'$\varepsilon_0$', usetex = True)
     ax.set_ylabel(r'$\delta \varepsilon$', usetex = True)
@@ -30,8 +30,6 @@ def plot_map_dec(N : int, eps : np.ndarray, de:np.ndarray,
                 Gamma:float, omega:float, kt:float, Gamma_phi:float,
                 toll:float = 1e-4, **plotkwargs):
 
-    print('d')
-
     M = get_map_dec(N, eps, de, Gamma, omega, kt, Gamma_phi, toll)
 
     M = -M
@@ -41,7 +39,7 @@ def plot_map_dec(N : int, eps : np.ndarray, de:np.ndarray,
 
     im = ax.pcolormesh(eps, de, M, **plotkwargs)
 
-    fig.suptitle(rf'$N = {N} : \Gamma = {Gamma}, k_B T = {kt}, \Gamma_{{\phi}} = {Gamma_phi}$', usetex = True)
+    fig.suptitle(rf'$N = {N} : \omega = {omega}, \Gamma = {Gamma}, k_B T = {kt}, \Gamma_{{\phi}} = {Gamma_phi}$', usetex = True)
 
     ax.set_xlabel(r'$\varepsilon_0$', usetex = True)
     ax.set_ylabel(r'$\delta \varepsilon$', usetex = True)

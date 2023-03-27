@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append('../src/Beetroot')
-
 from Beetroot.engine import *
 
 import pytest

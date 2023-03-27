@@ -1,14 +1,11 @@
 import numpy as np
 
-from fast_interp import interp1d
-
-from scipy.integrate import quad_vec
-from scipy.signal import fftconvolve
-
 import multiprocessing as mp
 from numba import njit, jit, prange, typeof
 from numba import types as nbtypes
 from numba.typed import List
+
+# from scipy.special import factorial
 
 from scipy import special
 import numba_scipy
@@ -115,71 +112,44 @@ def get_Ies(z, toll):
         res.append(BIe)
     
     return np.array(res)
-   
-def generate_convolved_spline(x, dx, Gamma, kt, k = 3):
 
-    @njit(fastmath = True)
-    def _integrand(e):
-        return (1-FermiDirac(e/kt)) * Lorentz(e, x, Gamma)
 
-    res, _ = quad_vec(_integrand, -np.infty, np.infty, points = [0])
+@jit(nbtypes.double[::1](nbtypes.double, nbtypes.double, nbtypes.double, nbtypes.int32),
+     **jit_kwargs, nopython = False, forceobj =True)
+def get_MIB_factors(de, g, toll, maxiter):
 
-    return interp1d(x.min(), x.max(), dx, res, k)
+    _n = -(de/(2*g))**2
 
-def _convolve(x, Gamma, kt):
+    _term = 1
+    i = 0
 
-    @njit(fastmath = True)
-    def _integrand(e):
-        return (1-FermiDirac(e/kt)) * Lorentz(e, x, Gamma)
+    res = [1]
 
-    res, _ = quad_vec(_integrand, -np.infty, np.infty, points = [0])
+    _norm = np.exp((de/(2*g))**2)
 
-    return res
+    while np.abs(_term) < toll and i < maxiter:
 
-def _fftconvolve(x, Gamma, kt):
+        i+=1
 
-    _dx = x[1]-x[0]
+        _term = _norm * (_n)**i / special.factorial(i)
 
-    _n = x.shape[0]
+        res.append(_term)
 
-    n_2= (_n-1)//2
+    return np.array(res)
 
-    _D = _dx * n_2
 
-    _xc = np.linspace(x.min()-_D, x.max()+_D, num = 2*_n-1 )
-
-    res = fftconvolve((1-FermiDirac(_xc/kt)),  Lorentz(x, 0, Gamma), mode = 'valid')
-
-    return res
-
-def _analytical(x, Gamma, kt):
+@jit(nbtypes.double[:](nbtypes.double[:], nbtypes.double, nbtypes.double),
+    fastmath = True, cache = True, forceobj=True)
+def broadened_FD_digamma(x, Gamma, kt):
 
     _2pkt_i = 1/(2*np.pi*kt)
     _gkt = Gamma * _2pkt_i
 
     _xkt = x * _2pkt_i
 
-    res = special.digamma(0.5 + _gkt +1j*_xkt) - special.digamma(0.5 + _gkt -1j*_xkt)
+    res = special.digamma(0.5 + _gkt +1j*_xkt) #- special.digamma(0.5 + _gkt -1j*_xkt)
 
     return 0.5*(1 + res.imag/np.pi)
-
-# @njit(nbtypes.double[:](nbtypes.double[:], nbtypes.double, nbtypes.double),
-#     cache=True, **jit_kwargs)
-def _numconvolve(x, Gamma, kt):
-
-    _dx = x[1]-x[0]
-
-    _n = x.shape[0]
-
-    n_2= (_n-1)//2
-
-    _D = _dx * n_2
-
-    _xc = np.linspace(x.min()-_D, x.max()+_D, num=2*_n-1 )
-
-    res = np.convolve((1-FermiDirac(_xc/kt)),  Lorentz(x, 0, Gamma), mode='valid')
-
-    return res
 
 @njit(nbtypes.int64(nbtypes.int64), cache = True, **jit_kwargs)
 def power_sign(n):
@@ -191,81 +161,4 @@ def handle_negative_index(n, BJ_array):
         return BJ_array[n]
     else:
         return BJ_array[-n] * power_sign(n)
-
-# @njit(nbtypes.UniTuple(nbtypes.double[:], 2)(InterpType, 
-#                                     nbtypes.double[:], nbtypes.double[:],
-#                                     nbtypes.double[:], nbtypes.double[:],
-#                                     nbtypes.int64, nbtypes.double[:], nbtypes.double), 
-#                                     fastmath = True, nogil = True, parallel = True)
-
-
-   
-
-
-# def get_Signal(N, eps, de, Gamma, omega, kt, toll = 1e-4):
-
-#     _dew = de/omega
-
-#     _dew_2 = (_dew)**(2)
-
-#     BJ_array = get_Js(N, _dew, toll)
-
-#     convergence_index_J = BJ_array.shape[0]
-
-#     BIe_array = get_Ies(_dew_2, toll)
-
-#     convergence_index_I = BIe_array.shape[0]
-
-#     min_x = eps.min() - (convergence_index_J + convergence_index_I + 1 - N) * omega
-#     max_x = eps.max() + (convergence_index_J + convergence_index_I + 1 - N) * omega
-
-#     _d_eps = (eps.max() - eps.min())/eps.shape[0]
-
-#     _x, _dx = np.linspace(min_x, max_x, int(np.ceil((max_x - min_x)/_d_eps)), retstep=True)
-
-#     min_x0 = eps.min() - ( convergence_index_I + 1) * omega
-#     max_x0 = eps.max() + ( convergence_index_I + 1) * omega
-
-#     _x0, _dx0 = np.linspace(min_x0, max_x0, int(np.ceil((max_x0 - min_x0)/_d_eps)), retstep=True)
-
-#     FD_spline = generate_convolved_spline(_x, _dx, Gamma, kt)
-
-#     BesselJ_factor_0 = (BJ_array[0]* BJ_array[N] * (power_sign(N)))
-
-#     Y0 =  BesselJ_factor_0 * FD_spline(_x0)
-
-#     m_sign = 1
-
-#     for m in range(1, convergence_index_J-N):
-
-#         m_sign = (m_sign^-0b1) + 1 # invert sign in 2's complement
-#         J_m = BJ_array[m]
-
-#         J_factor_p = (J_m * (BJ_array[m+N] + handle_negative_index(m-N, BJ_array)))
-#         J_factor_m = m_sign * (J_m * (handle_negative_index(-m+N, BJ_array) + handle_negative_index(-m-N, BJ_array)))
-
-#         Y0 += J_factor_p * FD_spline(_x0 - m * omega)
-#         Y0 += J_factor_m * FD_spline(_x0 + m * omega)
-
-#     Y_0_interp = interp1d(min_x0, max_x0, _dx0, Y0)
-
-#     Y = BIe_array[0] * Y_0_interp(eps)
-
-#     for i in range(1, convergence_index_I):
-
-#         factor = BIe_array[i]
-
-#         Y += 2 * factor * (Y_0_interp(eps + i*omega) + Y_0_interp(eps - i*omega))
-
-#     return Y
-
-        
-if __name__ == '__main__':
-
-    x = 1e2
-
-    j_array = get_Js(2, x, 1e-4)
-
-    for i, j in enumerate(j_array):
-
-        assert j == J(i, x), f'{i}, {j}, {J(i, x)}'
+    
