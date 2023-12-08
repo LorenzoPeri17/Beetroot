@@ -55,12 +55,12 @@ def get_map(N : int, eps : np.ndarray, de:np.ndarray,
         return np.array(Map)
 
 def get_map_loss(N : int, eps : np.ndarray, de:np.ndarray, 
-                Gamma:float, omega:float, kt:float, kappa:float, g :float,
+                Gamma:float, omega:float, kt:float, g :float, kappa:float, 
                 toll:float = 1e-4, maxiter_MIB :int = 30) -> np.ndarray:
 
     Map = []
 
-    args = [(N, eps, de0, Gamma, omega, kt, kappa, g, toll, maxiter_MIB) for de0 in de]
+    args = [(N, eps, de0, Gamma, omega, kt, g, kappa, toll, maxiter_MIB) for de0 in de]
     ncores = mp.cpu_count()
 
     with mp.Pool(processes=ncores) as pool:

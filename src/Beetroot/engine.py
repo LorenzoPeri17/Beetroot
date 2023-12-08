@@ -149,7 +149,7 @@ def broadened_FD_digamma(x, Gamma, kt):
 
     res = special.digamma(0.5 + _gkt +1j*_xkt) #- special.digamma(0.5 + _gkt -1j*_xkt)
 
-    return 0.5*(1 + res.imag/np.pi)
+    return 0.5 - res.imag/np.pi
 
 @njit(nbtypes.int64(nbtypes.int64), cache = True, **jit_kwargs)
 def power_sign(n):

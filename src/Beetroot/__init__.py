@@ -1,1 +1,1 @@
-__all__ = ['parallel', 'signal']
+__all__ = ['parallel', 'signal', 'utils']
