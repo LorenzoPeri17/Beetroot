@@ -15,7 +15,8 @@ dependencies = [
     'scipy',
     'matplotlib',
     'numba',
-    'numba-scipy'
+    'numba-scipy',
+    'mpmath'
 ]
 
 [project.optional-dependencies]
