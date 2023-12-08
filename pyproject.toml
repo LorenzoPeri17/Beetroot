@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Beetroot"
-version="0.1.0"
+version="0.1.1"
 authors = [
     {name = "Lorenzo Peri", email = "lorenzo@quantummotion.tech"},
 ]
@@ -14,9 +14,9 @@ dependencies = [
     "numpy",
     'scipy',
     'matplotlib',
-    'numba'
+    'numba',
+    'numba-scipy'
 ]
-dynamic = ["version"]
 
 [project.optional-dependencies]
 tests = ["pytest"]

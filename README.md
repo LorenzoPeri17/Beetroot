@@ -10,7 +10,7 @@ The simples calculation one might want to do is to compute the admittance of a s
 This is done by the following code:
 
 ```python
-from Beetroot import get_Signal
+from Beetroot.signal import get_Signal
 
 kt = 1
 de = 0.5
@@ -21,7 +21,7 @@ N =1 # N-th harmonic
 
 eps = np.linspace(-5* kt,  5 * kt, 1001)
 
-Y = get_Single_Signal(N, eps, de, Gamma, omega, kt)
+Y = get_Signal(N, eps, de, Gamma, omega, kt)
 ```
 
 > Note : Beetroot by default computes the *non-normalized* admittance. I.e. it does *NOT* include the phase. This can be fixed by including
