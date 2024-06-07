@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Beetroot"
-version="0.1.1"
+version="1.0.0"
 authors = [
     {name = "Lorenzo Peri", email = "lorenzo@quantummotion.tech"},
 ]
 description = "The definitive library for Single Elctron Box simulations"
 requires-python = ">=3.9"
 dependencies = [
-    "numpy",
+    'numpy',
     'scipy',
     'matplotlib',
     'numba',
@@ -20,7 +20,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-tests = ["pytest"]
+test = ["pytest"]
 
 [tool.pytest.ini_options]
 testpaths = [

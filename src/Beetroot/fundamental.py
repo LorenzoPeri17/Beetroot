@@ -1,7 +1,7 @@
 from Beetroot.signal import get_Signal
 
-from mpmath import psi as mpm_psi
-from scipy.special import psi as sp_psi
+from mpmath import psi as mpm_psi       # type: ignore
+from scipy.special import psi as sp_psi # type: ignore
 import numpy as np
 
 def get_Small_Signal_Fundamental_noFloquet(eps : np.ndarray,

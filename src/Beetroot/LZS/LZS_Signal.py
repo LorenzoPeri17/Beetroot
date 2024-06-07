@@ -1,5 +1,5 @@
-from Beetroot.engine import *
-from Beetroot.signal import _compute_signal, _compute_signal_loss
+from ..engine import *
+from ..signal import _compute_signal, _compute_signal_loss
 from typing import Union, Tuple
 
 @jit(nbtypes.double[:](nbtypes.double, nbtypes.double, 

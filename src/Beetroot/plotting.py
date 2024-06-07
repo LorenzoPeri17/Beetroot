@@ -2,13 +2,13 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-from Beetroot.signal import *
+from .parallel import *
 
-def plot_map_single(N : int, eps : np.ndarray, de:np.ndarray, 
+def plot_map(N : int, eps : np.ndarray, de:np.ndarray, 
                 Gamma:float, omega:float, kt:float, 
                 toll:float = 1e-4, **plotkwargs):
 
-    M = get_map_single(N, eps, de, Gamma, omega, kt, toll)
+    M = get_map(N, eps, de, Gamma, omega, kt, toll)
 
     M = -M
     M /= M.max()
@@ -26,11 +26,11 @@ def plot_map_single(N : int, eps : np.ndarray, de:np.ndarray,
 
     return fig, ax
 
-def plot_map_dec(N : int, eps : np.ndarray, de:np.ndarray, 
+def plot_map_loss(N : int, eps : np.ndarray, de:np.ndarray, 
                 Gamma:float, omega:float, kt:float, Gamma_phi:float,
                 toll:float = 1e-4, **plotkwargs):
 
-    M = get_map_dec(N, eps, de, Gamma, omega, kt, Gamma_phi, toll)
+    M = get_map_loss(N, eps, de, Gamma, omega, kt, Gamma_phi, toll)
 
     M = -M
     M /= M.max()

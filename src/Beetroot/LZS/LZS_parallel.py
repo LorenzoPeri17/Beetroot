@@ -1,4 +1,4 @@
-from LZS_Signal import get_LZS_Signal
+from .LZS_Signal import get_LZS_Signal
 import numpy as np
 import multiprocessing as mp
 
@@ -12,7 +12,7 @@ def get_LZS_map_MW(N : int, eps : np.ndarray,
 
     Map = []
 
-    args = [(N, eps, de0, de_rf, Gamma, kt, omega_rf, omega_MW, toll) for de0 in de_MW]
+    args = [(N, eps, de_rf, de0, Gamma, kt, omega_rf, omega_MW, toll) for de0 in de_MW]
 
     ncores = mp.cpu_count()
 
@@ -31,7 +31,7 @@ def get_LZS_map_rf(N : int, eps : np.ndarray,
 
     Map = []
 
-    args = [(N, eps, de_MW, de0, Gamma, kt, omega_rf, omega_MW, toll) for de0 in de_rf]
+    args = [(N, eps, de0, de_MW, Gamma, kt, omega_rf, omega_MW, toll) for de0 in de_rf]
 
     ncores = mp.cpu_count()
 
