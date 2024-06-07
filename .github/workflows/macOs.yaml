@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest]
-        python-version: '>=3.9'
+        python-version-file: 'pyproject.toml' # Read python version from a file pyproject.toml
 
     steps:
     - uses: actions/checkout@v2
