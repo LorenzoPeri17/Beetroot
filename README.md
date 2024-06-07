@@ -1,10 +1,10 @@
 # Beetroot
 
-![win](https://github.com/LorenzoPeri17/NanoDTC-GitHub-Tutorial/actions/workflows/windows.yml/badge.svg)
+![win](https://github.com/LorenzoPeri17/Beetroot/actions/workflows/windows.yml/badge.svg)
 
-![ubu](https://github.com/LorenzoPeri17/NanoDTC-GitHub-Tutorial/actions/workflows/ubuntu.yml/badge.svg)
+![ubu](https://github.com/LorenzoPeri17/Beetroot/actions/workflows/ubuntu.yml/badge.svg)
 
-![mac](https://github.com/LorenzoPeri17/NanoDTC-GitHub-Tutorial/actions/workflows/macOs.yml/badge.svg)
+![mac](https://github.com/LorenzoPeri17/Beetroot/actions/workflows/macOs.yml/badge.svg)
 
 Beetroot is a project to compute the signal arising from a Single Electron Box.
 
