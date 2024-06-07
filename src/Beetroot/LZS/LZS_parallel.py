@@ -4,7 +4,6 @@ import multiprocessing as mp
 
 mp.freeze_support()
 
-
 def get_LZS_map_MW(N : int, eps : np.ndarray, 
                 de_MW:np.ndarray, de_rf:float,
                 Gamma:float, kt:float, 
