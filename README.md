@@ -1,9 +1,7 @@
 # Beetroot
 
 ![win](https://github.com/LorenzoPeri17/Beetroot/actions/workflows/windows.yml/badge.svg)
-
 ![ubu](https://github.com/LorenzoPeri17/Beetroot/actions/workflows/ubuntu.yml/badge.svg)
-
 ![mac](https://github.com/LorenzoPeri17/Beetroot/actions/workflows/macOs.yml/badge.svg)
 
 Beetroot is a project to compute the signal arising from a Single Electron Box.
@@ -18,7 +16,19 @@ If you use `Beetroot`, please cite
 
 Peri, L., Oakes, G. A., Cochrane, L., Ford, C. J. B., & Gonzalez-Zalba, M. F. (2024). Beyond-adiabatic Quantum Admittance of a Semiconductor Quantum Dot at High Frequencies: Rethinking Reflectometry as Polaron Dynamics. Quantum, 8, 1294. https://doi.org/10.22331/q-2024-03-21-1294
 
+von Horstig, F.-E., Peri, L., Barraud, S., Shevchenko, S. N., Ford, C. J. B., Gonzalez-Zalba, M. F. Floquet Interferometry of a Dressed Semiconductor Quantum Dot. http://arxiv.org/abs/2407.14241.
+
 ## Installation
+
+### From pypi
+
+Beetroot is available from pypi via
+
+```bash
+pip install Beetroot
+```
+
+### From source
 
 To install this package from source, download this repo and simply
 
@@ -26,9 +36,9 @@ To install this package from source, download this repo and simply
 pip install .
 ```
 
-## Testing
+### Testing
 
-To test `Beetroot`, install as
+To test `Beetroot`, install from source as
 
 ``` bash
 pip install .[test]
@@ -39,7 +49,7 @@ pip install .[test]
 Testing can now be conducted via
 
 ``` bash
-cd tests && pytest
+pytest
 ```
 
 ## Usage
@@ -67,7 +77,7 @@ The complete script can be found in `examples/fundamental.py` and generates this
 ![Admittance of the SEB for $N=1$](Figures/fundamental.png)
 
 > Note : Beetroot by default computes the *non-normalized* admittance. I.e. it does *NOT* include the phase. This can be fixed by including
-
+>
 > ```python
 > from Beetroot import get_precoeff
 > Complex_Admittance = Y * get_precoeff(N, Gamma, omega)
@@ -135,7 +145,7 @@ The complete script can be found in `examples/small_signal.py` and generates thi
 
 Beetroot also includes a module to compute the response of an SEB to a two-tone excitation.
 
-The theory and experimental implementation behind this module can be found in **THIS PAPER**.
+The theory and experimental implementation behind this module can be found in [this paper](https://arxiv.org/abs/2407.14241).
 
 This is done by the following code:
 
