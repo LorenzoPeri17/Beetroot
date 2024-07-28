@@ -25,7 +25,7 @@ von Horstig, F.-E., Peri, L., Barraud, S., Shevchenko, S. N., Ford, C. J. B., Go
 Beetroot is available from pypi via
 
 ```bash
-pip install Beetroot
+pip install Beetroot-SEB
 ```
 
 ### From source
@@ -74,7 +74,7 @@ Y = get_Signal(N, eps, de, Gamma, omega, kt)
 
 The complete script can be found in `examples/fundamental.py` and generates this figure.
 
-![Admittance of the SEB for $N=1$](Figures/fundamental.png)
+![Admittance of the SEB for $N=1$](https://raw.github.com/LorenzoPeri17/Beetroot/main/Figures/fundamental.png)
 
 > Note : Beetroot by default computes the *non-normalized* admittance. I.e. it does *NOT* include the phase. This can be fixed by including
 >
@@ -103,7 +103,7 @@ Y = get_map(N, eps, de, Gamma, omega, kt)
 
 The complete script can be found in `examples/map.py` and generates this figure.
 
-![Admittance of the SEB for $N=1$](Figures/map.png)
+![Admittance of the SEB for $N=1$](https://raw.github.com/LorenzoPeri17/Beetroot/main/Figures/map.png)
 
 > Functions in `Beetroot.parallel` are parallelized via `multiprocessing.pool`. To avoid recusive imports on non-linux platforms, please wrap the main file in
 
@@ -136,7 +136,7 @@ Yss = get_Small_Signal_Fundamental(eps, Gamma, omega, kt)
 
 The complete script can be found in `examples/small_signal.py` and generates this figure.
 
-![Small signal admittance of the SEB for $N=1$](Figures/small_signal.png)
+![Small signal admittance of the SEB for $N=1$](https://raw.github.com/LorenzoPeri17/Beetroot/main/Figures/small_signal.png)
 
 > The small signal admittance is **normalizetd to the input amplitude**, so that `Yss = Y/(2*de)`
 
@@ -170,7 +170,7 @@ Y = get_LZS_Signal(N, eps, de_rf, de_MW, Gamma, kt, omega_rf, omega_MW)
 
 The complete script can be found in `examples/two_tone.py` and generates this figure.
 
-![Admittance of a dressed SEB for $N=1$](Figures/two_tone.png)
+![Admittance of a dressed SEB for $N=1$](https://raw.github.com/LorenzoPeri17/Beetroot/main/Figures/two_tone.png)
 
 One can compute the two-tone maps in parallel.
 To sweep the `de_MW` parameter, use
@@ -194,7 +194,7 @@ Y = get_LZS_map_MW(N,eps,de_MW_array, de_rf,Gamma, kt, omega_rf, omega_MW)
 
 The complete script can be found in `examples/two_tine_MW_map.py` and generates this figure.
 
-![Admittance of a dressed SEB for $N=1$](Figures/MW_map.png)
+![Admittance of a dressed SEB for $N=1$](https://raw.github.com/LorenzoPeri17/Beetroot/main/Figures/MW_map.png)
 
 To sweep the `de_rf` parameter instead, use
 
@@ -219,4 +219,4 @@ Y = get_LZS_map_rf(N, eps, de_MW, de_rf_array, Gamma, kt, omega_rf, omega_MW)
 
 The complete script can be found in `examples/two_tine_rf_map.py` and generates this figure.
 
-![Admittance of a dressed SEB for $N=1$](Figures/rf_map.png)
+![Admittance of a dressed SEB for $N=1$](https://raw.github.com/LorenzoPeri17/Beetroot/main/Figures/rf_map.png)
